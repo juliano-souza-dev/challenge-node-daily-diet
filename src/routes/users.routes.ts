@@ -16,6 +16,7 @@ export async function usersRoutes(app: FastifyInstance) {
         error: 'invalid Data!',
       })
     }
+
     return reply.status(201).send()
   })
 }
