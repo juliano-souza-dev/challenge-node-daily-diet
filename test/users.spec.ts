@@ -1,5 +1,5 @@
 import { execSync } from 'child_process'
-import { beforeEach, describe, beforeAll, afterAll, it } from 'vitest'
+import { beforeEach, describe, beforeAll, afterAll, it, expect } from 'vitest'
 import { app } from '../src/app'
 import request from 'supertest'
 
@@ -16,7 +16,7 @@ describe('users suit test', () => {
   })
 
   it('should be able to create a new user', async () => {
-    const result = await request(app.server)
+    await request(app.server)
       .post('/users/register')
       .send({
         name: 'joh doe',
@@ -24,7 +24,19 @@ describe('users suit test', () => {
         password: '123456',
       })
       .expect(201)
+  })
+  it('shoud not be able to create a new user, when the email already registered', async () => {
+    const user = {
+      name: 'joh doe',
+      email: 'johdoe@mail.com',
+      password: '123456',
+    }
+    await request(app.server).post('/users/register').send(user)
 
-    console.log('----', result.body)
+    const result = await request(app.server)
+      .post('/users/register')
+      .send(user)
+      .expect(401)
+    expect(result.body).toHaveProperty('message')
   })
 })

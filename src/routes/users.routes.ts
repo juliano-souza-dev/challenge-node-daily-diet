@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { knex } from '../database'
 import { generateHash } from '../utils/password'
+import { randomUUID } from 'crypto'
 
 export async function usersRoutes(app: FastifyInstance) {
   app.post('/register', async (request, reply) => {
@@ -22,6 +23,15 @@ export async function usersRoutes(app: FastifyInstance) {
     const user = isValidUser.data
 
     try {
+      const userAlreadyExists = await knex('users')
+        .where({ email: user.email })
+        .first()
+
+      if (userAlreadyExists) {
+        return reply.status(401).send({
+          message: 'not allowed! The email is already in use',
+        })
+      }
       await knex('users').insert({
         name: user.name,
         email: user.email,
@@ -29,9 +39,14 @@ export async function usersRoutes(app: FastifyInstance) {
       })
     } catch (err) {
       return reply.status(500).send({
-        error: 'There was an erro with your request!',
+        message: 'There was an erro with your request!',
       })
     }
+    const sessionId = randomUUID()
+    reply.setCookie('session_id', sessionId, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 dias
+    })
     return reply.status(201).send()
   })
 }
