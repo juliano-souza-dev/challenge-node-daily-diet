@@ -2,7 +2,7 @@ import { config } from 'dotenv'
 
 import z from 'zod'
 
-config({ path: process.env.NODE_ENV === 'teste' ? '.env.test' : '.env' })
+config({ path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env' })
 
 const envConfigSchema = z.object({
   DATABASE_URL: z.string(),
@@ -19,4 +19,5 @@ if (!_env.success) {
   console.error('⚠️ Invalid environment variables', _env.error.format())
   throw new Error('Invalid enviroment variables!')
 }
+
 export const env = _env.data

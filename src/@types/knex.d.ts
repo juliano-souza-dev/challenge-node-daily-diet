@@ -2,16 +2,15 @@
 import knex from 'knex'
 
 declare module 'knex/types/tables' {
-  interface User {
-    id: string
-    name: string
-    email: string
-    session_id: string
-    created_at: Date
-    updated_at: Date
-  }
-
-  interface tables {
-    users: User
+  export interface Tables {
+    users: {
+      id: string
+      name: string
+      email: string
+      password: string
+      session_id: string
+      created_at: Date
+      updated_at: Date
+    }
   }
 }
