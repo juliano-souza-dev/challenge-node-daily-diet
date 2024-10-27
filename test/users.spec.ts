@@ -39,4 +39,25 @@ describe('users suit test', () => {
       .expect(401)
     expect(result.body).toHaveProperty('message')
   })
+  it.only('should be able to authenticate a valid user', async () => {
+    const user = {
+      name: 'Joh Doe',
+      email: 'johdoe@mail.com',
+      password: '123456',
+    }
+    await request(app.server).post('/users/register').send(user)
+
+    const userCredentials = {
+      email: 'johdoe@mail.com',
+      password: '123456',
+    }
+    const authenticateRequest = await request(app.server)
+      .post('/auth/login')
+      .send(userCredentials)
+      .send(userCredentials)
+      .expect(200)
+
+    const cookie = authenticateRequest.get('Set-cookie')
+    expect(cookie).toBeDefined()
+  })
 })
