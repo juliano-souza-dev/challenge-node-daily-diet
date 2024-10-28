@@ -5,7 +5,7 @@ import { generateHash } from '../utils/password'
 import { randomUUID } from 'crypto'
 
 export async function usersRoutes(app: FastifyInstance) {
-  app.post('/register', async (request, reply) => {
+  app.post('/', async (request, reply) => {
     const userRegisterSchema = z.object({
       name: z.string(),
       email: z.string(),
@@ -32,22 +32,25 @@ export async function usersRoutes(app: FastifyInstance) {
           message: 'not allowed! The email is already in use',
         })
       }
+
+      const sessionId = randomUUID()
+      reply.setCookie('sessionId', sessionId, {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7, // 7 dias
+      })
       await knex('users').insert({
         id: randomUUID(),
         name: user.name,
         email: user.email,
         password: await generateHash(user.password),
+        session_id: sessionId,
       })
     } catch (err) {
       return reply.status(500).send({
         message: 'There was an erro with your request!',
       })
     }
-    const sessionId = randomUUID()
-    reply.setCookie('session_id', sessionId, {
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 dias
-    })
+
     return reply.status(201).send()
   })
 }

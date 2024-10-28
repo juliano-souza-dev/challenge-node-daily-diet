@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "npx vitest",
+    "test": "npx vitest --no-file-parallelism --fileParallelism=false",
     "dev": "tsx watch src/server.ts",
     "knex": "node --import tsx ./node_modules/knex/bin/cli.js",
     "lint": "eslint src/**/*.ts  test/**/*.ts --fix",

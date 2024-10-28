@@ -17,7 +17,7 @@ describe('users suit test', () => {
 
   it('should be able to create a new user', async () => {
     await request(app.server)
-      .post('/users/register')
+      .post('/users')
       .send({
         name: 'joh doe',
         email: 'johdoe@mail.com',
@@ -31,21 +31,21 @@ describe('users suit test', () => {
       email: 'johdoe@mail.com',
       password: '123456',
     }
-    await request(app.server).post('/users/register').send(user)
+    await request(app.server).post('/users').send(user)
 
     const result = await request(app.server)
-      .post('/users/register')
+      .post('/users')
       .send(user)
       .expect(401)
     expect(result.body).toHaveProperty('message')
   })
-  it.only('should be able to authenticate a valid user', async () => {
+  it('should be able to authenticate a valid user', async () => {
     const user = {
       name: 'Joh Doe',
       email: 'johdoe@mail.com',
       password: '123456',
     }
-    await request(app.server).post('/users/register').send(user)
+    await request(app.server).post('/users').send(user)
 
     const userCredentials = {
       email: 'johdoe@mail.com',
