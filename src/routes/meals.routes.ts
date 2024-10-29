@@ -19,14 +19,8 @@ export async function mealsRoutes(app: FastifyInstance) {
         error: 'Bad Request',
       })
     }
-    const { sessionId } = request.cookies
-    const user = await knex('users').where('session_id', sessionId).first()
-    if (!user) {
-      return reply.status(404).send({
-        message: 'user not found!',
-      })
-    }
 
+    const { user } = request
     const { name, description, date, isOnDiet } = mealValidate.data
 
     await knex('meals').insert({
@@ -35,20 +29,21 @@ export async function mealsRoutes(app: FastifyInstance) {
       description,
       date,
       is_on_diet: isOnDiet,
-      user_id: user.id,
+      user_id: user?.id,
     })
 
     return reply.status(201).send()
   })
   app.get('/', { preHandler: checkSession }, async (request, reply) => {
-    const { sessionId } = request.cookies
-    const user = await knex('users').where('session_id', sessionId).first()
-    if (!user) {
-      return reply.status(400).send({
-        message: 'user not found!',
-      })
-    }
-    const meals = await knex('meals').where('user_id', user.id)
+    const { user } = request
+    const meals = await knex('meals').where('user_id', user?.id)
+    reply.send(meals)
+  })
+  app.get('/', { preHandler: checkSession }, async (request, reply) => {
+    const { user } = request
+
+    const meals = await knex('meals').where('user_id', user?.id)
+
     reply.send(meals)
   })
 }
