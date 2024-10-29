@@ -67,4 +67,28 @@ describe('users suit test', () => {
 
     expect(response.body).toHaveLength(2)
   })
+  it('should be able to list a specific meal', async () => {
+    const userResponse = await request(app.server).post('/users').send({
+      name: 'John Doe',
+      email: 'johndoe@gmail.com',
+      password: '123',
+    })
+
+    const cookie = userResponse.get('Set-Cookie')
+    await request(app.server)
+      .post('/meals')
+      .set('Cookie', cookie!)
+      .send({
+        name: 'dinner',
+        description: 'last meal',
+        date: new Date().setHours(18, 0, 0),
+        isOnDiet: true,
+      })
+
+    const response = await request(app.server)
+      .get('/meals')
+      .set('Cookie', cookie!)
+
+    console.log(response.body[0])
+  })
 })

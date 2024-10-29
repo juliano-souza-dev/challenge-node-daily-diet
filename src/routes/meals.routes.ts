@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { knex } from '../database'
 import { checkSession } from '../middlewares/check-session'
+import { randomUUID } from 'crypto'
 
 export async function mealsRoutes(app: FastifyInstance) {
   app.post('/', { preHandler: checkSession }, async (request, reply) => {
@@ -29,6 +30,7 @@ export async function mealsRoutes(app: FastifyInstance) {
     const { name, description, date, isOnDiet } = mealValidate.data
 
     await knex('meals').insert({
+      id: randomUUID(),
       name,
       description,
       date,
