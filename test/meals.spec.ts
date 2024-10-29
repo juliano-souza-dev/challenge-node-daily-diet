@@ -89,13 +89,12 @@ describe('users suit test', () => {
       .get('/meals')
       .set('Cookie', cookie!)
 
-    // const { id } = response.body[0]
+    const { id } = response.body[0]
 
-    // const responseMeal = await request(app.server)
-    //   .get(`/meals/${id}`)
-    //   .set('Cookie', cookie!)
-    //   .expect(200)
-
-    // expect(responseMeal.body).toHaveProperty('id')
+    const responseMeal = await request(app.server)
+      .get(`/meals/${id}`)
+      .set('Cookie', cookie!)
+      .expect(200)
+    expect(responseMeal.body).toHaveProperty('id')
   })
 })
